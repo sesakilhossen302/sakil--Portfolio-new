@@ -842,7 +842,7 @@ const HorizontalScroll = {
     wrap.offsetHeight;
     track.offsetHeight;
     
-    // 2. Ensure sticky container is natively sticky at bottom: 0 (Exact Heynesh logic)
+    // 2. Ensure sticky container is natively sticky at bottom: 0 (Smooth Pinning logic)
     stickyEl.style.position = 'sticky';
     stickyEl.style.bottom = '0px';
     stickyEl.style.top = 'auto';
@@ -877,7 +877,7 @@ const HorizontalScroll = {
     // Reset initial transform
     gsap.set(track, { x: 0 });
 
-    // 6. GSAP Horizontal Tween with ScrollTrigger (Exact Heynesh logic: native sticky pins, NO pin spacer glitches)
+    // 6. GSAP Horizontal Tween with ScrollTrigger (Smooth Pinning logic: native sticky pins, NO pin spacer glitches)
     STATE.workTween = gsap.to(track, {
       x: xMovement,
       ease: 'none',
