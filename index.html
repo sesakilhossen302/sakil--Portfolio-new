@@ -351,10 +351,15 @@
      TABLET & MOBILE VIEW (< 992px)
      ========================================================== */
   @media screen and (max-width: 991px) {
-    /* Prevent horizontal page overflow */
-    .page-wrap, .main-wrap, .hero, .container {
+    /* Prevent horizontal page overflow without creating nested scroll ports */
+    .page-wrap, .main-wrap {
       max-width: 100vw !important;
-      overflow-x: hidden !important;
+      overflow-x: clip !important;
+      overflow-y: visible !important;
+    }
+    .container {
+      max-width: 100vw !important;
+      overflow: visible !important;
     }
 
     /* Fixed Top Navigation Bar */
@@ -493,14 +498,14 @@
       min-height: auto !important;
       height: auto !important;
       padding-top: 85px !important;
-      padding-bottom: 30px !important;
+      padding-bottom: 24px !important;
       margin-bottom: 0 !important;
       display: flex !important;
       flex-direction: column !important;
       justify-content: flex-start !important;
       align-items: center !important;
       position: relative !important;
-      overflow: visible !important;
+      overflow: hidden !important;
       width: 100% !important;
       max-width: 100vw !important;
     }
@@ -857,40 +862,91 @@
       margin: 0 !important;
     }
 
-    /* About & Milestones on Mobile - Correct Flow without Hero Overlap */
+    /* About & Milestones on Mobile - Flawless Touch Scroll & Zero Hero Overlap */
     .about-section {
       position: relative !important;
       margin-top: 0 !important;
       top: auto !important;
       bottom: auto !important;
-      padding-top: 50px !important;
+      padding-top: 40px !important;
       padding-bottom: 50px !important;
       padding-left: 20px !important;
       padding-right: 20px !important;
       z-index: 10 !important;
+      overflow: visible !important;
+      touch-action: pan-y !important;
+      -webkit-overflow-scrolling: touch !important;
+      scroll-margin-top: 80px !important;
+    }
+    .about-wrap {
+      position: relative !important;
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px !important;
+      margin-top: 24px !important;
+      overflow: visible !important;
+      touch-action: pan-y !important;
     }
     .about-card-container {
       display: flex !important;
       flex-direction: column !important;
       gap: 20px !important;
+      width: 100% !important;
       padding: 0 !important;
-      margin: 24px 0 0 !important;
+      margin: 20px 0 0 !important;
+      position: relative !important;
+      overflow: visible !important;
+      touch-action: pan-y !important;
     }
     .about-card-wrap {
       width: 100% !important;
-      position: static !important;
+      position: relative !important;
+      inset: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
       transform: none !important;
+      overflow: visible !important;
+      touch-action: pan-y !important;
     }
     .about-card {
       width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      position: relative !important;
       border-radius: 18px !important;
       padding: 24px 20px !important;
+      margin-bottom: 0 !important;
       opacity: 1 !important;
       visibility: visible !important;
       transform: none !important;
+      overflow: visible !important;
+      touch-action: pan-y !important;
+      pointer-events: auto !important;
     }
-    .about-card-point-wrap {
+    .about-card-point-wrap,
+    .about-card-point-line-wrap,
+    .about-card-point-line,
+    .about-card-point-circle,
+    .about-timeline-wrap,
+    .about-timeline-overflow,
+    .about-timeline,
+    .about-timeline-position,
+    .mobile-timeline-wrap,
+    .mobile-timeline-icon {
       display: none !important;
+      pointer-events: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    .popup-card-wrap:not(.is-active-card) {
+      display: none !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
     }
 
     /* Work / Projects Track on Mobile - Completely Compact, Zero Empty Space */
@@ -2064,9 +2120,10 @@ Users can explore recipes, follow cooking instructions, and easily understand wh
       const href = link.getAttribute('href');
       if (!href || href === '#') return;
       const target = document.querySelector(href);
-      if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
+        const headerOffset = window.innerWidth < 992 ? 80 : 20;
+        const targetPos = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: targetPos, behavior: 'smooth' });
         history.replaceState(null, null, ' ');
 
         // Auto-close mobile menu if open
@@ -2175,7 +2232,9 @@ Users can explore recipes, follow cooking instructions, and easily understand wh
       e.preventDefault();
       const target = document.querySelector('#about');
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
+        const headerOffset = window.innerWidth < 992 ? 80 : 20;
+        const targetPos = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: targetPos, behavior: 'smooth' });
       }
     });
   });
@@ -2207,11 +2266,16 @@ Users can explore recipes, follow cooking instructions, and easily understand wh
         workSticky.style.minHeight = 'auto';
       }
 
-      // Reset About section margin-top on mobile so hero cards never overlap it
+      // Reset About section & cards on mobile to guarantee smooth native scrolling
       const aboutSec = document.querySelector('.about-section');
       if (aboutSec) {
         aboutSec.style.marginTop = '0px';
+        aboutSec.style.touchAction = 'pan-y';
       }
+      const aboutEls = document.querySelectorAll('.about-card-wrap, .about-card, .about-card-container, .about-wrap');
+      aboutEls.forEach(el => {
+        el.style.touchAction = 'pan-y';
+      });
 
       // Ensure Capabilities cards on mobile flow vertically without magnetic transforms
       const capaCards = document.querySelectorAll('.capa-card');
@@ -2225,6 +2289,16 @@ Users can explore recipes, follow cooking instructions, and easily understand wh
       if (typeof gsap !== 'undefined') {
         gsap.set('.hero-cards-wrap, .hero-card-1, .hero-card-2, .hero-card-3, .hero-cards-left, .hero-card-1-wrap, .hero-card-2-wrap', {
           clearProps: 'transform,top,left,right,bottom,position'
+        });
+      }
+
+      // Disable any stray ScrollTrigger pins or locks on about section on mobile
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.getAll().forEach(st => {
+          const trig = st.vars && st.vars.trigger;
+          if (trig === '.about-card-container' || trig === '.about-section') {
+            st.disable();
+          }
         });
       }
     }
