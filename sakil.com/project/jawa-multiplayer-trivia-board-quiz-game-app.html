@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jawa - Multiplayer Trivia & Board Quiz Game App — Flutter Mobile App by S.E. Sakil Hossen</title>
+  <meta name="description" content="Jawa is an engaging, interactive multiplayer trivia and quiz board game application built with Flutter & Dart. It offers both single-device local pass-and-play (Red vs. Blue team) and real-time online multiplayer game modes with custom game rooms (Meelas). The app features category-based trivia boards, point-based competitive question rounds, community hubs, global leaderboards (Weekly, Monthly, All-Time), and full bilingual support (English & Arabic). Architected using clean MVC patterns, GetX state management, and ScreenUtil for responsive cross-platform gameplay.">
+  <link rel="shortcut icon" href="../sakil_assets/favicon.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #07090E;
+      --bg-surface: #0E1219;
+      --bg-surface-elevated: #141A24;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(0, 240, 255, 0.4);
+      --cyan: #00F0FF;
+      --cyan-glow: rgba(0, 240, 255, 0.25);
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Background Glow */
+    .ambient-glow {
+      position: fixed;
+      top: -15vw;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70vw;
+      height: 40vw;
+      background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.12) 0%, rgba(14, 165, 233, 0.04) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+    }
+
+    /* Navigation */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(7, 9, 14, 0.75);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      transition: all 0.25s ease;
+    }
+    .nav-back:hover {
+      color: var(--cyan);
+      border-color: var(--border-hover);
+      background: rgba(0, 240, 255, 0.06);
+      transform: translateX(-3px);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      font-size: 18px;
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      color: var(--cyan);
+    }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cyan);
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+    .nav-cta:hover {
+      box-shadow: 0 0 20px var(--cyan-glow);
+      transform: translateY(-1px);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero Header */
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+    }
+    .pill-dim {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border-color: var(--border);
+    }
+    .hero-title {
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #FFFFFF 40%, #A5F3FC 75%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 820px;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    /* Button Toolbar */
+    .action-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 4px 18px var(--cyan-glow);
+    }
+    .btn-primary:hover {
+      background: #38E1FF;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0, 240, 255, 0.45);
+    }
+    .btn-glass {
+      background: var(--bg-surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-glass:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-surface-elevated);
+      color: var(--cyan);
+      transform: translateY(-2px);
+    }
+    .btn-accent {
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+    }
+    .btn-accent:hover {
+      background: rgba(0, 240, 255, 0.22);
+      transform: translateY(-2px);
+    }
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    /* Image Showcase */
+    .image-showcase {
+      position: relative;
+      border-radius: 24px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid var(--border);
+      box-shadow: 0 30px 90px -25px rgba(0, 240, 255, 0.2);
+      margin-bottom: 60px;
+      overflow: hidden;
+    }
+    .image-showcase img {
+      width: 100%;
+      height: auto;
+      max-height: 640px;
+      object-fit: contain;
+      background: #0B0E14;
+      border-radius: 16px;
+      display: block;
+    }
+
+    /* Video Section */
+    .video-showcase-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      margin-bottom: 60px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+    .section-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      max-width: 650px;
+      margin-bottom: 28px;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .video-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    /* Two Column Layout */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      margin-bottom: 60px;
+    }
+    @media (max-width: 900px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+    }
+    .card-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 20px;
+      background: var(--cyan);
+      border-radius: 2px;
+    }
+
+    .overview-text {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    /* Meta Table */
+    .meta-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .meta-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+    .meta-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Features List */
+    .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 12px 16px;
+      border-radius: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .feature-item:hover {
+      border-color: rgba(0, 240, 255, 0.25);
+    }
+    .feature-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--cyan);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .feature-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Tech Stack Tags */
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tech-tag {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      color: #E2E8F0;
+      transition: all 0.2s ease;
+    }
+    .tech-tag:hover {
+      border-color: var(--border-hover);
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    /* Project Navigation Footer */
+    .proj-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 30px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .proj-nav-link {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      gap: 4px;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      max-width: 45%;
+    }
+    .proj-nav-link:hover {
+      color: var(--cyan);
+    }
+    .proj-nav-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+    .proj-nav-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .proj-nav-link:hover .proj-nav-title {
+      color: var(--cyan);
+    }
+
+    /* CTA Banner */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.12) 0%, rgba(14, 165, 233, 0.04) 100%), var(--bg-surface);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 24px;
+      padding: 48px;
+      text-align: center;
+      margin-top: 60px;
+      box-shadow: 0 20px 60px -20px var(--cyan-glow);
+    }
+    .cta-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .cta-desc {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto 28px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    /* MOBILE & COMPACT RESPONSIVE SPECIFICS */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 12px 16px;
+      }
+      .nav-brand span:first-child {
+        font-size: 16px;
+      }
+      .nav-back {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .nav-cta {
+        padding: 6px 14px;
+        font-size: 12px;
+      }
+      .container {
+        padding: 24px 16px 60px;
+      }
+      .hero-title {
+        font-size: clamp(1.9rem, 8vw, 2.8rem);
+        margin-bottom: 14px;
+      }
+      .hero-desc {
+        font-size: 15px;
+        margin-bottom: 24px;
+      }
+      .action-bar {
+        gap: 10px;
+        margin-bottom: 32px;
+      }
+      .action-bar .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 20px;
+      }
+      .image-showcase {
+        padding: 8px;
+        border-radius: 18px;
+        margin-bottom: 36px;
+      }
+      .video-showcase-section {
+        padding: 24px 16px;
+        border-radius: 18px;
+        margin-bottom: 36px;
+      }
+      .card {
+        padding: 24px 18px;
+        border-radius: 18px;
+      }
+      .meta-list {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .proj-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+      .proj-nav-link {
+        max-width: 100%;
+        text-align: center !important;
+      }
+      .cta-banner {
+        padding: 32px 18px;
+        border-radius: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Sticky Navbar -->
+  <header class="nav">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>All Projects</span>
+      </a>
+
+      <a href="../index.html" class="nav-brand">
+        <span>SAKIL</span>
+        <span class="brand-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 8 8" fill="none"><path d="M0.314882 5.55873C0.104959 5.06153 0 4.54112 0 3.99751C0 3.45391 0.104959 2.93725 0.314882 2.44754C0.528495 1.95413 0.812218 1.52819 1.16605 1.16972C1.52357 0.811252 1.94834 0.528495 2.44035 0.32115C2.93606 0.107525 3.45524 0.000712204 3.99787 0.000712204C4.54049 0.000712204 5.05968 0.107525 5.55539 0.32115C6.0474 0.528495 6.47217 0.811252 6.82968 1.16972C7.1872 1.52819 7.47092 1.95413 7.68085 2.44754C7.89446 2.93725 8 3.45391 8 3.99751C8 4.54112 7.89446 5.06153 7.68085 5.55873C7.47092 6.05214 7.1872 6.47808 6.82968 6.83655C6.47217 7.19502 6.0474 7.47778 5.55539 7.68512C5.05968 7.89504 4.54049 8 3.99787 8C3.45524 8 2.93606 7.89504 2.44035 7.68512C1.94834 7.47778 1.52357 7.19502 1.16605 6.83655C0.812218 6.47808 0.528495 6.05214 0.314882 5.55873ZM7.04261 4.00463C7.04261 2.32759 5.6798 0.963283 4.00426 0.963283C2.32873 0.963283 0.965917 2.32759 0.965917 4.00463C0.965917 5.68166 2.32873 7.04597 4.00426 7.04597C5.6798 7.04597 7.04261 5.68166 7.04261 4.00463ZM2.3000 4.8682L3.1000 4.8682C3.1000 5.1436 3.1906 5.3409 3.3718 5.4601C3.5530 5.5793 3.7915 5.6389 4.0874 5.6389C4.3833 5.6389 4.6180 5.5815 4.7915 5.4667C4.9650 5.3519 5.0518 5.1877 5.0518 4.9741C5.0518 4.8064 4.9818 4.6706 4.8419 4.5668C4.7019 4.4630 4.4449 4.3736 4.0709 4.2985L3.6358 4.2102C3.1257 4.1065 2.7486 3.9398 2.5046 3.7101C2.2606 3.4805 2.1386 3.1678 2.1386 2.7720C2.1386 2.3039 2.3168 1.9362 2.6731 1.6689C3.0294 1.4017 3.5097 1.2680 4.1140 1.2680C4.7227 1.2680 5.2016 1.3984 5.5507 1.6591C5.8998 1.9197 6.0766 2.2796 6.0811 2.7389L5.2766 2.7389C5.2721 2.4960 5.1881 2.3150 5.0245 2.1958C4.8609 2.0766 4.6208 2.0170 4.3043 2.0170C3.9922 2.0170 3.7548 2.0678 3.5921 2.1693C3.4294 2.2709 3.3481 2.4243 3.3481 2.6296C3.3481 2.7930 3.4192 2.9233 3.5614 3.0204C3.7036 3.1176 3.9587 3.2037 4.3267 3.2788L4.7618 3.3671C5.3052 3.4775 5.7003 3.6541 5.9472 3.8970C6.1940 4.1399 6.3175 4.4696 6.3175 4.8863C6.3175 5.3721 6.1363 5.7485 5.7739 6.0157C5.4114 6.2828 4.9080 6.4164 4.2635 6.4164C3.6067 6.4164 3.0970 6.2828 2.7346 6.0157C2.3722 5.7485 2.1906 5.3660 2.1897 4.8682H2.3000Z" fill="currentColor"></path></svg>
+        </span>
+      </a>
+
+      <a href="https://calendly.com/" target="_blank" class="nav-cta">
+        <span>Book a Call</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Breadcrumb & Badges -->
+    <div class="hero-meta">
+      <span class="pill">Project 11</span>
+      <span class="pill pill-dim">Flutter Mobile App</span>
+      <span class="pill pill-dim">iOS & Android</span>
+      <span class="pill pill-dim">Production Ready</span>
+    </div>
+
+    <!-- Title & Description -->
+    <h1 class="hero-title">Jawa - Multiplayer Trivia & Board Quiz Game App</h1>
+    <p class="hero-desc">Jawa is an engaging, interactive multiplayer trivia and quiz board game application built with Flutter & Dart. It offers both single-device local pass-and-play (Red vs. Blue team) and real-time online multiplayer game modes with custom game rooms (Meelas). The app features category-based trivia boards, point-based competitive question rounds, community hubs, global leaderboards (Weekly, Monthly, All-Time), and full bilingual support (English & Arabic). Architected using clean MVC patterns, GetX state management, and ScreenUtil for responsive cross-platform gameplay.</p>
+
+    <!-- Quick Action Buttons -->
+    <div class="action-bar">
+      
+      <a href="https://github.com/sesakilhossen302/jawaher865-game.git" target="_blank" rel="noopener noreferrer" class="btn btn-glass">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017C2 16.442 4.87 20.193 8.84 21.52C9.34 21.61 9.52 21.3 9.52 21.03C9.52 20.79 9.51 20.15 9.51 19.31C6.73 19.92 6.14 17.97 6.14 17.97C5.68 16.81 5.03 16.5 5.03 16.5C4.12 15.88 5.1 15.9 5.1 15.9C6.1 15.97 6.63 16.93 6.63 16.93C7.52 18.46 8.97 18.02 9.54 17.76C9.63 17.11 9.89 16.67 10.17 16.42C7.95 16.17 5.62 15.31 5.62 11.47C5.62 10.38 6.01 9.48 6.65 8.78C6.55 8.53 6.2 7.51 6.75 6.15C6.75 6.15 7.59 5.88 9.5 7.18C10.3 6.96 11.15 6.85 12 6.85C12.85 6.85 13.7 6.96 14.5 7.18C16.41 5.88 17.25 6.15 17.25 6.15C17.8 7.51 17.45 8.53 17.35 8.78C17.99 9.48 18.38 10.38 18.38 11.47C18.38 15.32 16.04 16.16 13.81 16.41C14.17 16.72 14.49 17.33 14.49 18.27C14.49 19.61 14.48 20.69 14.48 21.02C14.48 21.29 14.66 21.61 15.17 21.51C19.14 20.18 22 16.43 22 12.017C22 6.484 17.522 2 12 2Z"/></svg>
+        <span>GitHub Code</span>
+      </a>
+    
+    </div>
+
+    <!-- Big Image Showcase -->
+    <div class="image-showcase">
+      <img src="../sakil_assets/projects/project_10.jpg" alt="Jawa - Multiplayer Trivia & Board Quiz Game App Mockup and Interface" loading="eager">
+    </div>
+
+    <!-- Live Video Walkthrough Section (if available) -->
+    
+
+    <!-- Two-Column Detailed Breakdown -->
+    <div class="details-grid">
+      <!-- Left: Narrative & Architecture -->
+      <div class="card">
+        <h2 class="card-title">Project Deep Dive & Architecture</h2>
+        <p class="overview-text">
+          <strong>Jawa - Multiplayer Trivia & Board Quiz Game App</strong> was engineered from the ground up using <strong>Flutter & Dart</strong>, adhering strictly to <strong>Clean Architecture</strong> principles. Designed to deliver smooth 60 FPS performance, offline-first reliability, and seamless platform-specific adaptations for both iOS and Android.
+        </p>
+        <p class="overview-text">
+          Features include structured state management, responsive UI adaptation using <code>ScreenUtil</code>, real-time client-server communication, and military-grade data validation.
+        </p>
+
+        <div class="meta-list">
+          <div class="meta-item">
+            <span class="meta-label">Role</span>
+            <span class="meta-val">Lead Flutter Developer</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Platforms</span>
+            <span class="meta-val">iOS & Android (Cross-Platform)</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Architecture</span>
+            <span class="meta-val">Clean Architecture (Layered)</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Performance</span>
+            <span class="meta-val">60 FPS Fluid Motion</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Highlights & Tech Stack -->
+      <div class="card">
+        <h2 class="card-title">Key Capabilities & Features</h2>
+        <div class="features-list">
+          
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Local Team Matchmaking (Red Team vs Blue Team pass-and-play on a singl…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Online Multiplayer Game Rooms (Create, join, and invite friends via Me…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Interactive Dynamic Game Board with multiple difficulty tiers and cate…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Category Selection & Customization for tailored quiz sessions</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Comprehensive Question & Answer flow with answer revealing and score d…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Real-time Leaderboard with Weekly, Monthly, and All-Time player rankin…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Player Community & Friends hub with featured rooms and online player s…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Full Bilingual Support (English and Arabic with seamless RTL/LTR switc…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Authentication options including Google, Apple, Email OTP verification…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Player Profile with match statistics (Games Played, Win Rate, Total Po…</div>
+    </div>
+  
+    <div class="feature-item">
+      <div class="feature-check">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feature-text">Smooth landscape and portrait responsive game board layouts optimized …</div>
+    </div>
+  
+        </div>
+
+        <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 12px; font-weight: 700;">Tech Stack & Integrations</h3>
+        <div class="tech-tags">
+          <span class="tech-tag">Flutter</span><span class="tech-tag">Dart</span><span class="tech-tag">GetX</span><span class="tech-tag">Trivia Game</span><span class="tech-tag">Multiplayer</span><span class="tech-tag">Mobile Game</span><span class="tech-tag">Localization (EN/AR)</span><span class="tech-tag">REST API</span><span class="tech-tag">UI/UX Design</span><span class="tech-tag">ScreenUtil</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Previous / Next Navigation -->
+    <div class="proj-nav">
+      
+        <a href="coffecito-coffee-ordering-rewards-app.html" class="proj-nav-link">
+          <span class="proj-nav-label">← Previous Project</span>
+          <span class="proj-nav-title">Coffecito - Coffee Ordering & Rewards App</span>
+        </a>
+      
+      
+      <a href="../index.html" class="btn btn-glass btn-sm">
+        <span>View All 12 Projects</span>
+      </a>
+
+      
+        <a href="c-service-on-demand-home-care-service-booking-app-with-ai-assistant.html" class="proj-nav-link" style="text-align: right;">
+          <span class="proj-nav-label">Next Project →</span>
+          <span class="proj-nav-title">C-Service – On-Demand Home Care & Service Booking App with AI Assistant</span>
+        </a>
+      
+    </div>
+
+    <!-- Hire CTA -->
+    <div class="cta-banner">
+      <h2 class="cta-title">Interested in Building a Project Like This?</h2>
+      <p class="cta-desc">Whether you need an MVP launched in 3 weeks or an enterprise cross-platform mobile solution, let's turn your concept into a reality.</p>
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        <a href="https://calendly.com/" target="_blank" class="btn btn-primary">
+          <span>Book a Free Discovery Call</span>
+        </a>
+        <a href="mailto:sakilhossen302@gmail.com" class="btn btn-glass">
+          <span>Send an Email</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 S.E. Sakil Hossen. Built with Flutter precision & modern web excellence.</p>
+  </footer>
+</body>
+</html>

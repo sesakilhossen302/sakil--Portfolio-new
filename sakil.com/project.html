@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Details — S.E. Sakil Hossen</title>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id') || params.get('slug');
+    if (id) {
+      window.location.replace('project/' + encodeURIComponent(id) + '.html');
+    } else {
+      window.location.replace('index.html');
+    }
+  </script>
+</head>
+<body style="background:#07090E; color:#fff; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh;">
+  <p>Loading project details...</p>
+</body>
+</html>
