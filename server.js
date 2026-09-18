@@ -64,10 +64,10 @@ const server = http.createServer((req, res) => {
     return res.end('Method Not Allowed');
   }
 
-  // Root redirect to /sakil.com/
+  // Serve root index.html directly
   if (req.url === '/' || req.url === '') {
-    res.writeHead(302, { Location: '/sakil.com/' });
-    return res.end();
+    const rootIndex = path.join(ROOT_DIR, 'index.html');
+    return serveFile(rootIndex, req, res);
   }
 
   let filePath = getSafeFilePath(req.url);
@@ -167,7 +167,7 @@ function serveFile(filePath, req, res, preloadedStats) {
 
 function startServer(port) {
   server.listen(port, () => {
-    const localUrl = `http://localhost:${port}/sakil.com/`;
+    const localUrl = `http://localhost:${port}/`;
     console.log(`\n==================================================`);
     console.log(`🚀 Server successfully running!`);
     console.log(`🔗 Local URL: ${localUrl}`);
