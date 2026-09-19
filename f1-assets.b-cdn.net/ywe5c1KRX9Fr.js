@@ -2869,8 +2869,8 @@ const CTAAnimation = {
       imageGroupId: 'image-trail-group',
       minDistance: 30,
       maxImages: 20,
-      fadeOutDelay: 800,
-      fadeOutInterval: 60,
+      fadeOutDelay: 100,
+      fadeOutInterval: 50,
       imageWidth: 200,
       imageHeight: 280,
       maxRotation: 30
@@ -2903,48 +2903,27 @@ const CTAAnimation = {
         return;
       }
 
-      this.imageGroup.style.pointerEvents = 'none';
-
       this.trailImages = [];
       this.imageIndex = 0;
       this.lastX = 0;
       this.lastY = 0;
 
-      const moveHandler = this.handleMouseMove.bind(this);
-      const leaveHandler = this.handleMouseLeave.bind(this);
+      Utils.addEvent(this.wrapper, 'mousemove', this.handleMouseMove.bind(this));
+      Utils.addEvent(this.wrapper, 'mouseleave', this.handleMouseLeave.bind(this));
 
-      Utils.addEvent(this.wrapper, 'mousemove', moveHandler);
-      Utils.addEvent(this.wrapper, 'pointermove', moveHandler);
-      Utils.addEvent(this.wrapper, 'mouseenter', moveHandler);
-      Utils.addEvent(this.wrapper, 'pointerenter', moveHandler);
-      Utils.addEvent(this.wrapper, 'mouseleave', leaveHandler);
-      Utils.addEvent(this.wrapper, 'pointerleave', leaveHandler);
-
-      if (this.svg && this.svg !== this.wrapper) {
-        Utils.addEvent(this.svg, 'mousemove', moveHandler);
-        Utils.addEvent(this.svg, 'pointermove', moveHandler);
-        Utils.addEvent(this.svg, 'mouseenter', moveHandler);
-        Utils.addEvent(this.svg, 'pointerenter', moveHandler);
-        Utils.addEvent(this.svg, 'mouseleave', leaveHandler);
-        Utils.addEvent(this.svg, 'pointerleave', leaveHandler);
-      }
-
-      console.log('✓ SAKIL Image Trail initialized (hover enabled)');
+      console.log('✓ SAKIL Image Trail initialized');
     },
 
     getSVGCoords(e) {
       const rect = this.svg.getBoundingClientRect();
       const vb = this.svg.viewBox.baseVal;
-      const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-      const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
       return {
-        x: (clientX - rect.left) / rect.width * vb.width,
-        y: (clientY - rect.top) / rect.height * vb.height
+        x: (e.clientX - rect.left) / rect.width * vb.width,
+        y: (e.clientY - rect.top) / rect.height * vb.height
       };
     },
 
     addImage(x, y) {
-      if (isNaN(x) || isNaN(y)) return;
       const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
       img.setAttribute('href', this.images[this.imageIndex++ % this.images.length]);
       img.setAttribute('x', x - this.config.imageWidth / 2);
@@ -2952,8 +2931,6 @@ const CTAAnimation = {
       img.setAttribute('width', this.config.imageWidth);
       img.setAttribute('height', this.config.imageHeight);
       img.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-      img.setAttribute('pointer-events', 'none');
-      img.style.pointerEvents = 'none';
 
       const rot = (Math.random() - 0.5) * this.config.maxRotation;
       img.setAttribute('transform', `rotate(${rot} ${x} ${y})`);
@@ -3002,7 +2979,6 @@ const CTAAnimation = {
 
     handleMouseMove(e) {
       const pos = this.getSVGCoords(e);
-      if (isNaN(pos.x) || isNaN(pos.y)) return;
       this.stopFadeOut();
 
       const dist = Math.hypot(pos.x - this.lastX, pos.y - this.lastY);
@@ -3285,7 +3261,6 @@ const ResizeHandler = {
     CTAAnimation.init();
     Clipboard.init();
     ImageTrail.init();
-    window.ImageTrail = ImageTrail;
     ButtonHover.init();
   
     SwiperInit.init();
