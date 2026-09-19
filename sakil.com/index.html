@@ -324,26 +324,490 @@
   }
 
   /* ==========================================================
-     LAPTOP VIEW SPECIFICS (992px to 1440px)
+     DESKTOP & ALL LAPTOP SCREENS (14", 16", 18"+ - min-width: 992px)
+     Flawless multi-display scaling, balanced margins, non-overlapping hero
      ========================================================== */
-  @media screen and (min-width: 992px) and (max-width: 1440px) {
+  @media screen and (min-width: 992px) {
+    /* 1. Left Sidebar Navigation: Perfectly sized & pinned */
+    .navigation {
+      position: fixed !important;
+      top: 1.2vw !important;
+      bottom: 1.2vw !important;
+      left: 1.2vw !important;
+      width: clamp(240px, 18.5vw, 290px) !important;
+      height: calc(100vh - 2.4vw) !important;
+      z-index: 100 !important;
+      display: block !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      scrollbar-width: none !important;
+    }
+    .navigation::-webkit-scrollbar {
+      display: none !important;
+    }
     .nav-container {
-      width: 20vw !important;
-      padding: 1.5vw 1.2vw !important;
+      width: 100% !important;
+      padding: 0 !important;
+      opacity: 1 !important;
     }
+    .mobile-menu,
+    .nav-button-mobile,
+    .nav-menu-wrap {
+      display: none !important;
+    }
+
+    /* 2. Main Content & Footer: Single consistent offset from sidebar */
     .main-wrap {
-      margin-left: 20vw !important;
-      width: 80vw !important;
+      margin-left: clamp(260px, 20.5vw, 315px) !important;
+      width: calc(100% - clamp(260px, 20.5vw, 315px)) !important;
+      max-width: none !important;
+      position: relative !important;
+      z-index: 20 !important;
+      box-sizing: border-box !important;
+      pointer-events: auto !important;
     }
-    .hero-container {
-      padding-left: 2vw !important;
-      padding-right: 2vw !important;
+    .footer {
+      margin-left: clamp(260px, 20.5vw, 315px) !important;
+      width: calc(100% - clamp(260px, 20.5vw, 315px)) !important;
+      max-width: none !important;
+      box-sizing: border-box !important;
+      padding-left: clamp(24px, 3.5vw, 56px) !important;
+      padding-right: clamp(24px, 3.5vw, 56px) !important;
+      padding-top: 6vw !important;
+      padding-bottom: 3vw !important;
+      position: relative !important;
+      z-index: 25 !important;
     }
-    .hero-cards-wrap {
-      width: clamp(480px, 58vw, 900px) !important;
+
+    /* Uniform Container Width across all content */
+    .main-wrap .container,
+    .footer .container {
+      width: 100% !important;
+      max-width: 1350px !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
     }
+
+    /* Reset redundant Webflow 21vw padding-left (eliminated the 41vw empty left gap) */
+    .about-section {
+      padding-left: clamp(24px, 3.5vw, 56px) !important;
+      padding-right: clamp(24px, 3.5vw, 56px) !important;
+      padding-top: 4vw !important;
+      padding-bottom: 8vw !important;
+      margin-top: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .about-wrap {
+      width: 100% !important;
+      align-items: center !important;
+      margin-top: 3vw !important;
+      position: relative !important;
+    }
+    .about-card-container {
+      width: 100% !important;
+      max-width: 1200px !important;
+      margin: 0 auto !important;
+    }
+    .about-card {
+      width: clamp(340px, 28vw, 480px) !important;
+    }
+
+    /* Work Section & Sticky Project Carousel */
     .work-sticky {
-      padding-left: 22vw !important;
+      padding: 3vh clamp(24px, 3.5vw, 56px) !important;
+      box-sizing: border-box !important;
+    }
+    .work-container {
+      width: 100% !important;
+      max-width: 1350px !important;
+      margin: 0 auto !important;
+    }
+    .work-track-wrap {
+      width: 100% !important;
+      overflow: visible !important;
+    }
+
+    /* Services Section (Solutions That Deliver): 3 equal columns */
+    .sevice_section {
+      padding-left: clamp(24px, 3.5vw, 56px) !important;
+      padding-right: clamp(24px, 3.5vw, 56px) !important;
+      padding-top: 5vw !important;
+      padding-bottom: 7vw !important;
+      box-sizing: border-box !important;
+    }
+    .service-wrap {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: clamp(16px, 1.8vw, 28px) !important;
+      width: 100% !important;
+      margin-top: 2.5vw !important;
+      padding: clamp(18px, 1.8vw, 28px) !important;
+      box-sizing: border-box !important;
+    }
+    .service-card,
+    .service-card.is-first {
+      width: 100% !important;
+      box-sizing: border-box !important;
+      background-color: #EAEFF5 !important;
+      border: 1px solid rgba(0, 0, 0, 0.06) !important;
+      border-radius: 18px !important;
+      padding: clamp(20px, 1.8vw, 32px) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    }
+    .service-card.is-first {
+      background-color: #CAD5E2 !important;
+    }
+    .service-card:hover {
+      transform: translateY(-6px) !important;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* What You Get / Capabilities Section */
+    .what_you_get_section {
+      padding-left: clamp(24px, 3.5vw, 56px) !important;
+      padding-right: clamp(24px, 3.5vw, 56px) !important;
+      padding-top: 6vw !important;
+      padding-bottom: 6vw !important;
+      box-sizing: border-box !important;
+    }
+
+    /* CTA Section */
+    .cta_section {
+      padding-left: clamp(24px, 3.5vw, 56px) !important;
+      padding-right: clamp(24px, 3.5vw, 56px) !important;
+      padding-top: 5vw !important;
+      padding-bottom: 5vw !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Testimonials Section: Balanced Swiper */
+    .testimonial_section {
+      padding-left: clamp(24px, 3.5vw, 56px) !important;
+      padding-right: clamp(24px, 3.5vw, 56px) !important;
+      padding-top: 5vw !important;
+      padding-bottom: 6vw !important;
+      box-sizing: border-box !important;
+    }
+    .swiper-main-wrap {
+      width: 100% !important;
+      align-items: stretch !important;
+      margin-top: 24px !important;
+    }
+    .swiper {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+    }
+    .swiper-slide {
+      width: clamp(340px, 32vw, 500px) !important;
+      height: auto !important;
+    }
+    .swiper-card {
+      height: 100% !important;
+      border-radius: 20px !important;
+      padding: clamp(22px, 2vw, 34px) !important;
+    }
+
+    /* FAQ Section */
+    .faq-column-main {
+      width: 100% !important;
+      max-width: 1350px !important;
+    }
+
+    /* 3. Hero Section on Laptops & Desktops: Perfectly Balanced, Zero Overlap */
+    .hero {
+      width: 100% !important;
+      min-height: 92vh !important;
+      height: auto !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      align-items: center !important;
+      position: relative !important;
+      overflow: visible !important;
+      box-sizing: border-box !important;
+    }
+    .hero-sticky {
+      width: 100% !important;
+      height: 90vh !important;
+      min-height: 620px !important;
+      max-height: 960px !important;
+      position: relative !important;
+      top: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: visible !important;
+    }
+    .mobile-hero-image-wrap {
+      display: none !important;
+    }
+
+    /* Top SAKIL Watermark */
+    .sakil-logo-preload {
+      position: relative !important;
+      width: 92% !important;
+      max-width: 1100px !important;
+      height: auto !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      z-index: 1 !important;
+    }
+    .sakil-logo-wrap {
+      width: 100% !important;
+      height: auto !important;
+    }
+    .sakil-logo-ghost {
+      opacity: 1 !important;
+      color: #00F0FF !important;
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    /* Navigation Links below watermark */
+    .hero-navigation-wrap {
+      position: relative !important;
+      width: 100% !important;
+      max-width: 980px !important;
+      margin: 4px auto 0 !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      z-index: 20 !important;
+    }
+    .hero-links-ghost-wrapper {
+      opacity: 1 !important;
+      visibility: visible !important;
+      gap: clamp(8px, 1.1vw, 16px) !important;
+    }
+    .hero-link-ghost {
+      color: #0F172A !important;
+      opacity: 1 !important;
+      font-weight: 700 !important;
+      font-size: clamp(11.5px, 0.85vw, 14.5px) !important;
+      letter-spacing: 0.05em !important;
+    }
+
+    /* Sakil's Portrait Photo Centered with Breathing Room */
+    .profile-img-wrap {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: flex-end !important;
+      z-index: 5 !important;
+      pointer-events: none !important;
+    }
+    .profile-img-item {
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: flex-end !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    .hero-profile-img {
+      max-height: clamp(480px, 66vh, 760px) !important;
+      width: auto !important;
+      object-fit: contain !important;
+      object-position: center bottom !important;
+      margin: 0 auto !important;
+      filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.14)) !important;
+    }
+
+    /* Hero Center Headline & Buttons - Placed Elegantly at Bottom Torso */
+    .hero-container {
+      position: relative !important;
+      width: 100% !important;
+      max-width: 1300px !important;
+      height: 100% !important;
+      margin: 0 auto !important;
+      padding: 0 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+      z-index: 25 !important;
+      pointer-events: none !important;
+      box-sizing: border-box !important;
+    }
+    .hero-left-text {
+      display: none !important;
+    }
+    .hero-right-text {
+      position: absolute !important;
+      bottom: 20px !important;
+      right: 28px !important;
+      max-width: 260px !important;
+      font-size: clamp(11.5px, 0.8vw, 13.5px) !important;
+      line-height: 1.5 !important;
+      color: #334155 !important;
+      text-align: right !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      z-index: 28 !important;
+    }
+    .hero-content-layout {
+      position: absolute !important;
+      bottom: 12px !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin: 0 auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      width: auto !important;
+      max-width: 440px !important;
+      z-index: 30 !important;
+      pointer-events: auto !important;
+    }
+    .hero-heading {
+      font-size: clamp(1.85rem, 2.8vw, 3.2rem) !important;
+      line-height: 1.05 !important;
+      font-weight: 900 !important;
+      color: #0F172A !important;
+      -webkit-text-fill-color: #0F172A !important;
+      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.9), 0 0 24px rgba(255, 255, 255, 0.9) !important;
+      margin: 0 auto 10px !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    .hero-buttons-wrap {
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 12px !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    .hero-cta-button {
+      background: #00F0FF !important;
+      border-radius: 999px !important;
+      padding: 9px 20px !important;
+      box-shadow: 0 4px 16px rgba(0, 240, 255, 0.45) !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+    }
+    .hero-cta-button .button-text {
+      color: #000 !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+      margin: 0 !important;
+    }
+    .hero-button {
+      background: rgba(255, 255, 255, 0.8) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      border-radius: 999px !important;
+      padding: 9px 20px !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+    }
+    .hero-button .button-text {
+      color: #0F172A !important;
+      font-weight: 700 !important;
+      font-size: 13px !important;
+      margin: 0 !important;
+    }
+
+    /* Badges positioned cleanly on sides - never on chest */
+    .hero-cards-wrap {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none !important;
+      z-index: 26 !important;
+    }
+    .hero-cards-left {
+      position: absolute !important;
+      bottom: 24px !important;
+      left: 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      width: auto !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    .hero-card-1-wrap,
+    .hero-card-2-wrap {
+      position: static !important;
+      left: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      right: auto !important;
+      width: auto !important;
+    }
+    .hero-card-1,
+    .hero-card-2 {
+      opacity: 1 !important;
+      visibility: visible !important;
+      background: rgba(255, 255, 255, 0.85) !important;
+      backdrop-filter: blur(16px) saturate(160%) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.07) !important;
+      border-radius: 14px !important;
+      padding: 12px 16px !important;
+      color: #0F172A !important;
+    }
+    .hero-card-3 {
+      position: absolute !important;
+      bottom: 105px !important;
+      right: 28px !important;
+      top: auto !important;
+      left: auto !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      background: rgba(255, 255, 255, 0.85) !important;
+      backdrop-filter: blur(16px) saturate(160%) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.07) !important;
+      border-radius: 14px !important;
+      padding: 14px 18px !important;
+      color: #0F172A !important;
+      width: auto !important;
+      max-width: 240px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+    }
+
+    /* 4. Footer Logo SAKIL Image Trail on Hover (No Click Required) */
+    .footer-logo {
+      position: relative !important;
+      cursor: pointer !important;
+      pointer-events: auto !important;
+    }
+    .footer-logo-icon {
+      pointer-events: auto !important;
+      cursor: pointer !important;
+    }
+    #image-trail-group,
+    #image-trail-group *,
+    .footer-logo-icon image {
+      pointer-events: none !important;
     }
   }
 
@@ -2307,7 +2771,40 @@ Users can explore recipes, follow cooking instructions, and easily understand wh
   window.addEventListener('resize', checkMobileHero);
   setTimeout(checkMobileHero, 150);
   setTimeout(checkMobileHero, 400);
-  setTimeout(checkMobileHero, 1000);
+  // Desktop & Laptop Footer Image Trail Instant Hover Enhancement
+  (function() {
+    function setupFooterHover() {
+      const wrapper = document.querySelector('.footer-logo');
+      const svg = document.querySelector('.footer-logo-icon');
+      const group = document.getElementById('image-trail-group');
+      if (!wrapper || !svg) return;
+
+      if (group) group.style.pointerEvents = 'none';
+      wrapper.style.cursor = 'pointer';
+      wrapper.style.pointerEvents = 'auto';
+      svg.style.cursor = 'pointer';
+      svg.style.pointerEvents = 'auto';
+
+      ['mouseenter', 'mousemove', 'pointerenter', 'pointermove'].forEach(function(evtName) {
+        wrapper.addEventListener(evtName, function(e) {
+          if (window.ImageTrail && typeof window.ImageTrail.handleMouseMove === 'function') {
+            window.ImageTrail.handleMouseMove(e);
+          }
+        }, { passive: true });
+        svg.addEventListener(evtName, function(e) {
+          if (window.ImageTrail && typeof window.ImageTrail.handleMouseMove === 'function') {
+            window.ImageTrail.handleMouseMove(e);
+          }
+        }, { passive: true });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupFooterHover);
+    } else {
+      setupFooterHover();
+    }
+  })();
 </script>
 
 </body></html>
